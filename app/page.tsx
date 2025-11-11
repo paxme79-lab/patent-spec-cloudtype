@@ -12,7 +12,7 @@ export default function Page() {
 async function handleGenerate(payload: {
   title_ko?: string; notes?: string; claims_text: string;
 }) {
-  setError?.(null);
+  setError?.('');
   setLoading?.(true);
   try {
     const res = await fetch('/api/generate', {
