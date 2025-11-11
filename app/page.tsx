@@ -33,9 +33,13 @@ async function handleGenerate(payload: {
       ? JSON.parse(bodyText)
       : JSON.parse(bodyText); // 서버가 항상 JSON으로 주므로 대부분 이 줄로 처리됩니다.
 
-    // 화면에 반영 (프로젝트에 맞게 바꾸세요)
-    setPreviewJson?.(data);           // 우측 미리보기용
-    // setSpecText?.(data?.spec_text); // 텍스트 필드가 있으면 이런 식으로
+    // 화면에 반영
+    // 우측 결과창이 '명세서 텍스트'라면 이걸로 쓰세요:
+    setSpecText?.(data?.spec_text ?? JSON.stringify(data, null, 2));
+    // (미리보기 전용 상태가 없다면, 콘솔로만 확인해도 됩니다)
+    // console.log('API result:', data);
+
+    
   } catch (err: any) {
     alert?.(String(err?.message || err));
     setError?.(String(err?.message || err));
