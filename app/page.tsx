@@ -9,28 +9,40 @@ export default function Page() {
   const [error, setError] = useState('');
   const [result, setResult] = useState<any>(null);
 
-  async function handleGenerate() {
-    setLoading(true);
-    setError('');
-    setResult(null);
-    try {
-      const res = await fetch('/api/generate', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ title_ko: title || undefined, notes: notes || undefined, claims_text: claims })
-      });
-      if (!res.ok) {
-        const text = await res.text();
-        throw new Error(text || `HTTP ${res.status}`);
-      }
-      const data = await res.json();
-      setResult(data);
-    } catch (e:any) {
-      setError(e?.message || 'Unknown error');
-    } finally {
-      setLoading(false);
+async function handleGenerate(payload: {
+  title_ko?: string; notes?: string; claims_text: string;
+}) {
+  setError?.(null);
+  setLoading?.(true);
+  try {
+    const res = await fetch('/api/generate', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(payload),
+    });
+
+    // 에러 응답은 그대로 표시(클라이언트가 죽지 않게)
+    const contentType = res.headers.get('content-type') || '';
+    const bodyText = await res.text();
+    if (!res.ok) {
+      throw new Error(`[${res.status}] ${bodyText || 'Request failed'}`);
     }
+
+    // JSON/텍스트 둘 다 안전하게 처리
+    const data = contentType.includes('application/json')
+      ? JSON.parse(bodyText)
+      : JSON.parse(bodyText); // 서버가 항상 JSON으로 주므로 대부분 이 줄로 처리됩니다.
+
+    // 화면에 반영 (프로젝트에 맞게 바꾸세요)
+    setPreviewJson?.(data);           // 우측 미리보기용
+    // setSpecText?.(data?.spec_text); // 텍스트 필드가 있으면 이런 식으로
+  } catch (err: any) {
+    alert?.(String(err?.message || err));
+    setError?.(String(err?.message || err));
+  } finally {
+    setLoading?.(false);
   }
+}
 
   return (
     <div className="container">
