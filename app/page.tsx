@@ -35,7 +35,7 @@ async function handleGenerate(payload: {
 
     // 화면에 반영
     // 우측 결과창이 '명세서 텍스트'라면 이걸로 쓰세요:
-    setSpecText?.(data?.spec_text ?? JSON.stringify(data, null, 2));
+        console.log('API result:', data);
     // (미리보기 전용 상태가 없다면, 콘솔로만 확인해도 됩니다)
     // console.log('API result:', data);
 
